@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import javafx.scene.text.Font;
 
 import java.util.Random;
+import java.util.Stack;
 
 public class Aplicacao extends Application {
     AnchorPane pane;
@@ -253,14 +254,15 @@ public class Aplicacao extends Application {
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() {
-                quickS(0, vet.length - 1);
+                quickIterativo(0, vet.length - 1);
                 return null;
             }
         };
 
         task.setOnSucceeded(e -> {
             Platform.runLater(() -> {
-                System.out.println("acabou");
+                for(int i = 0; i < vet.length; i++)
+                    System.out.println(vet[i].getText());
             });
         });
 
@@ -361,29 +363,199 @@ public class Aplicacao extends Application {
         thread.start();
     }
 
-    public void quick(int ini, int fim)
+    public void quickIterativ(int ini, int fim)
     {
-        int i = ini, j = fim;
-        Button aux;
-        boolean flag = true;
+        Task<Void> task = new Task<Void>(){
+            @Override
+            protected Void call() {
+                int i = ini, j = fim;
+                Button aux;
+                boolean flag = true;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                while(i < j) {
+                    if(flag)
+                        while((i < j && Integer.parseInt(vet[i].getText()) <= Integer.parseInt(vet[j].getText())))
+                            i++;
+                    else
+                        while(i < j && Integer.parseInt(vet[j].getText()) >= Integer.parseInt(vet[i].getText()))
+                            j--;
+                    for (int x = 0; x < 10; x++) {
+                        final int finalI = i;
+                        final int finalJ = j;
+                        final Button buttonI = vet[finalI];
+                        final Button buttonJ = vet[finalJ];
+                        Platform.runLater(() -> {
+                            buttonI.setLayoutY(buttonI.getLayoutY() + 4.9);
+                            buttonJ.setLayoutY(buttonJ.getLayoutY() - 4.9);
+                        });
 
-        while(i < j) {
-            if(flag)
-                while((i < j && Integer.parseInt(vet[i].getText()) <= Integer.parseInt(vet[j].getText())))
-                    i++;
-            else
-                while(i < j && Integer.parseInt(vet[j].getText()) >= Integer.parseInt(vet[i].getText()))
-                    j--;
+                        try {
+                            Thread.sleep(20);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-            aux = vet[i];
-            vet[i] = vet[j];
-            vet[j] = aux;
-            flag = !flag;
+                    Button buttonI = vet[i];
+                    Button buttonJ = vet[j];
+                    final double posPai = buttonI.getLayoutX();
+                    final double posMaiorF = buttonJ.getLayoutX();
+                    final double diff = posMaiorF - posPai;
+
+                    for (double y = 0; Math.abs(y) <= Math.abs(diff); y += (diff > 0 ? 5 : -5)) {
+                        final double posY = y;
+                        Button finalButtonI = buttonI;
+                        Button finalButtonJ = buttonJ;
+                        Platform.runLater(() -> {
+                            finalButtonI.setLayoutX(posPai + posY);
+                            finalButtonJ.setLayoutX(posMaiorF - posY);
+                        });
+                        try {
+                            Thread.sleep(20);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    for (int x = 0; x < 10; x++) {
+                        final int finalI = i;
+                        final int finalJ = j;
+                        buttonI = vet[finalI];
+                        buttonJ = vet[finalJ];
+
+                        Button finalButtonI1 = buttonI;
+                        Button finalButtonJ1 = buttonJ;
+                        Platform.runLater(() -> {
+                            finalButtonI1.setLayoutY(finalButtonI1.getLayoutY() - 4.9);
+                            finalButtonJ1.setLayoutY(finalButtonJ1.getLayoutY() + 4.9);
+                        });
+                        try {
+                            Thread.sleep(20);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    aux = vet[i];
+                    vet[i] = vet[j];
+                    vet[j] = aux;
+                    flag = !flag;
+                }
+                if(ini < i - 1)
+                    quickS(ini, i - 1);
+                if(j + 1 < fim)
+                    quickS(j + 1, fim);
+                return null;
+            }
+        };
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
+    public void quickIterativo(int ini, int fim) {
+        Stack<Integer> pilha = new Stack<>();
+        pilha.push(fim);
+        pilha.push(ini);
+
+        while (!pilha.isEmpty()) {
+            ini = pilha.pop();
+            fim = pilha.pop();
+
+            int i = ini, j = fim;
+            Button aux;
+            boolean flag = true;
+
+            for(int x = 0; x < vet.length; x++)
+                if(x >= i && x <= j)
+                    vet[x].setVisible(true);
+                else
+                    vet[x].setVisible(false);
+
+            while (i < j) {
+                if (flag) {
+                    while (i < j && Integer.parseInt(vet[i].getText()) <= Integer.parseInt(vet[j].getText()))
+                        i++;
+                } else {
+                    while (i < j && Integer.parseInt(vet[j].getText()) >= Integer.parseInt(vet[i].getText()))
+                        j--;
+                }
+
+                for (int x = 0; x < 10; x++) {
+                    final int finalI = i;
+                    final int finalJ = j;
+                    final Button buttonI = vet[finalI];
+                    final Button buttonJ = vet[finalJ];
+                    Platform.runLater(() -> {
+                        buttonI.setLayoutY(buttonI.getLayoutY() + 4.9);
+                        buttonJ.setLayoutY(buttonJ.getLayoutY() - 4.9);
+                    });
+
+                    try {
+                        Thread.sleep(20);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                Button buttonI = vet[i];
+                Button buttonJ = vet[j];
+                final double posPai = buttonI.getLayoutX();
+                final double posMaiorF = buttonJ.getLayoutX();
+                final double diff = posMaiorF - posPai;
+
+                for (double y = 0; Math.abs(y) <= Math.abs(diff); y += (diff > 0 ? 5 : -5)) {
+                    final double posY = y;
+                    Button finalButtonI = buttonI;
+                    Button finalButtonJ = buttonJ;
+                    Platform.runLater(() -> {
+                        finalButtonI.setLayoutX(posPai + posY);
+                        finalButtonJ.setLayoutX(posMaiorF - posY);
+                    });
+                    try {
+                        Thread.sleep(20);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                for (int x = 0; x < 10; x++) {
+                    final int finalI = i;
+                    final int finalJ = j;
+                    buttonI = vet[finalI];
+                    buttonJ = vet[finalJ];
+
+                    Button finalButtonI1 = buttonI;
+                    Button finalButtonJ1 = buttonJ;
+                    Platform.runLater(() -> {
+                        finalButtonI1.setLayoutY(finalButtonI1.getLayoutY() - 4.9);
+                        finalButtonJ1.setLayoutY(finalButtonJ1.getLayoutY() + 4.9);
+                    });
+                    try {
+                        Thread.sleep(20);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                aux = vet[i];
+                vet[i] = vet[j];
+                vet[j] = aux;
+                flag = !flag;
+            }
+
+            if (ini < i - 1) {
+                pilha.push(i - 1);
+                pilha.push(ini);
+            }
+            if (j + 1 < fim) {
+                pilha.push(fim);
+                pilha.push(j + 1);
+            }
         }
-
-        if(ini < i - 1)
-            quick(ini, i - 1);
-        if(j + 1 < fim)
-            quick(j + 1, fim);
+        for(int x = 0; x < vet.length; x++)
+                vet[x].setVisible(true);
     }
 }
