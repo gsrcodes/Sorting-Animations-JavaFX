@@ -6,6 +6,8 @@ import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -18,9 +20,44 @@ public class Aplicacao extends Application {
     AnchorPane pane;
     Button botao_gerar;
     Button botao_inicio;
-    Button botao_cancelar;
     private Button[] vet;
-    boolean ordenando;
+    private Label[] labels;
+    private Label labelI;
+    private Label labelJ;
+    private Label labelPermutacoes;
+
+    private String code = "public void quickPods(int ini, int fim) {\n" +
+            "    Stack<Integer> pilha = new Stack<>();\n" +
+            "    pilha.push(fim);\n" +
+            "    pilha.push(ini);\n" +
+            "    while (!pilha.isEmpty()) {\n" +
+            "        ini = pilha.pop();\n" +
+            "        fim = pilha.pop();\n" +
+            "        int i = ini, j = fim;\n" +
+            "        Button aux;\n" +
+            "        boolean flag = true;\n" +
+            "        while (i < j) {\n" +
+            "            if (flag)\n" +
+            "                while (i < j && Integer.parseInt(vet[i].getText()) <= Integer.parseInt(vet[j].getText()))\n" +
+            "                    i++;\n" +
+            "            else\n" +
+            "                while (i < j && Integer.parseInt(vet[j].getText()) >= Integer.parseInt(vet[i].getText()))\n" +
+            "                    j--;\n" +
+            "            aux = vet[i];\n" +
+            "            vet[i] = vet[j];\n" +
+            "            vet[j] = aux;\n" +
+            "            flag = !flag;\n" +
+            "        }\n" +
+            "        if (ini < i - 1) {\n" +
+            "            pilha.push(i - 1);\n" +
+            "            pilha.push(ini);\n" +
+            "        }\n" +
+            "        if (j + 1 < fim) {\n" +
+            "            pilha.push(fim);\n" +
+            "            pilha.push(j + 1);\n" +
+            "        }\n" +
+            "    }\n" +
+            "}\n";
 
     public static void main(String[] args)
     {
@@ -30,7 +67,25 @@ public class Aplicacao extends Application {
     public void start(Stage stage) throws Exception {
         stage.setTitle("Pesquisa e Ordenacao");
         pane = new AnchorPane();
-        // ComboBox
+
+        TextArea textArea = new TextArea(code);
+        textArea.setEditable(false);
+        textArea.setLayoutY(40);
+        textArea.setLayoutX(400);
+        pane.getChildren().add(textArea);
+        highlightLine(textArea, 4);
+        labelI = new Label("i");
+        labelI.setVisible(false);
+        labelJ = new Label("j");
+        labelJ.setVisible(false);
+        labelPermutacoes = new Label("Permutações: " + 0);
+        labelPermutacoes.setLayoutX(10);
+        labelPermutacoes.setLayoutY(130);
+        labelPermutacoes.setVisible(false);
+        pane.getChildren().add(labelPermutacoes);
+        pane.getChildren().add(labelI);
+        pane.getChildren().add(labelJ);
+
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.getItems().addAll("HeapSort", "QuickSort");
         comboBox.setValue("HeapSort");
@@ -38,7 +93,6 @@ public class Aplicacao extends Application {
         comboBox.setLayoutY(70);
         pane.getChildren().add(comboBox);
 
-        // Botão de início
         botao_inicio = new Button("Iniciar ordenação");
         botao_inicio.setLayoutX(10);
         botao_inicio.setLayoutY(100);
@@ -50,32 +104,29 @@ public class Aplicacao extends Application {
         });
         pane.getChildren().add(botao_inicio);
 
-        // Botão de gerar valores;
         botao_gerar = new Button("Gerar valores");
         botao_gerar.setLayoutX(130);
         botao_gerar.setLayoutY(100);
         botao_gerar.setOnAction(e -> gerar_valores());
         pane.getChildren().add(botao_gerar);
 
-        // Botão de cancelar ordenacao;
-        botao_cancelar = new Button("Cancelar");
-        botao_cancelar.setLayoutX(400);
-        botao_cancelar.setLayoutY(100);
-        botao_cancelar.setOnAction(e -> ordenando = false);
-        botao_cancelar.setVisible(false);
-        pane.getChildren().add(botao_cancelar);
-
-        // Array de botões
         int numBotoes = 15;
         vet = new Button[numBotoes];
+        labels = new Label[numBotoes];
         for (int i = 0; i < numBotoes; i++) {
             vet[i] = new Button();
-            vet[i].setLayoutX(100 + i * 40); // Posicionamento horizontal
+            vet[i].setLayoutX(100 + i * 40);
             vet[i].setLayoutY(200);
             vet[i].setMinHeight(40);
             vet[i].setMinWidth(40);
             vet[i].setFont(new Font(14));
             vet[i].setVisible(false);
+
+            labels[i] = new Label(Integer.toString(i));
+            labels[i].setLayoutX(118 + i * 40);
+            labels[i].setLayoutY(250);
+            labels[i].setVisible(false);
+            pane.getChildren().add(labels[i]);
             pane.getChildren().add(vet[i]);
         }
 
@@ -83,12 +134,34 @@ public class Aplicacao extends Application {
         stage.setScene(scene);
         stage.show();
     }
+
+    private void highlightLine(TextArea textArea, int lineNumber) {
+        String[] lines = textArea.getText().split("\n");
+        StringBuilder highlightedCode = new StringBuilder();
+        for (int i = 0; i < lines.length; i++) {
+            if (i == lineNumber - 1) {
+                highlightedCode.append(">> ").append(lines[i]).append("\n");
+            } else {
+                highlightedCode.append(lines[i]).append("\n");
+            }
+        }
+        textArea.setText(highlightedCode.toString());
+    }
+
     public void gerar_valores() {
         for(int i = 0; i < vet.length; i++) {
             vet[i].setText(Integer.toString(new Random().nextInt(100)));
             vet[i].setVisible(true);
+            labels[i].setVisible(true);
             vet[i].setStyle("");
         }
+        labelJ.setLayoutY(280);
+        labelJ.setLayoutX(120 + 14 * 40);
+        labelI.setLayoutY(280);
+        labelI.setLayoutX(120 + 0 * 40);
+        labelJ.setVisible(true);
+        labelI.setVisible(true);
+        labelPermutacoes.setVisible(true);
     }
 
     public void heap_sort()
@@ -96,14 +169,18 @@ public class Aplicacao extends Application {
         Task<Void> task = new Task<Void>(){
             @Override
             protected Void call() {
-                ordenando = true;
-                botao_gerar.setDisable(ordenando);
-                botao_inicio.setDisable(ordenando);
-                botao_cancelar.setVisible(ordenando);
-                int TL = vet.length, FE, FD, maiorF, pai;
+                botao_gerar.setDisable(true);
+                botao_inicio.setDisable(true);
+                labelI.setVisible(false);
+                labelJ.setVisible(false);
+                int TL = vet.length, FE, FD, maiorF, pai, n = 0;
                 Button aux;
-
-                while (TL > 1 && ordenando) {
+                while (TL > 1) {
+                    for(int x = 0; x < vet.length; x++)
+                        if(isSort(x))
+                            vet[x].setStyle("-fx-background-color: lightgreen;");
+                        else
+                            vet[x].setStyle("");
                     pai = TL / 2 - 1;
                     while (pai >= 0) {
                         FE = 2 * pai + 1;
@@ -117,14 +194,18 @@ public class Aplicacao extends Application {
                             aux = vet[pai];
                             vet[pai] = vet[maiorF];
                             vet[maiorF] = aux;
-
+                            n++; // qtde permutações
+                            int finalN = n;
+                            Platform.runLater(() -> {
+                                labelPermutacoes.setText("Permutações: " + finalN);
+                            });
                             for (int i = 0; i < 10; i++) {
                                 int finalPai = pai;
                                 Platform.runLater(() -> vet[finalPai].setLayoutY(vet[finalPai].getLayoutY() + 4.9));
                                 int finalMaiorF = maiorF;
                                 Platform.runLater(() -> vet[finalMaiorF].setLayoutY(vet[finalMaiorF].getLayoutY() - 4.9));
                                 try {
-                                    Thread.sleep(10);
+                                    Thread.sleep(2);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
@@ -144,7 +225,7 @@ public class Aplicacao extends Application {
                                         Platform.runLater(() -> vet[finalPai1].setLayoutX(posPai + finalJ));
                                         Platform.runLater(() -> vet[finalMaiorF1].setLayoutX(posMaiorF - finalJ));
                                         try {
-                                            Thread.sleep(10);
+                                            Thread.sleep(2);
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         }
@@ -155,7 +236,7 @@ public class Aplicacao extends Application {
                                         Platform.runLater(() -> vet[finalPai1].setLayoutX(posPai + finalJ));
                                         Platform.runLater(() -> vet[finalMaiorF1].setLayoutX(posMaiorF - finalJ));
                                         try {
-                                            Thread.sleep(10);
+                                            Thread.sleep(2);
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         }
@@ -168,7 +249,7 @@ public class Aplicacao extends Application {
                                 int finalMaiorF2 = maiorF;
                                 Platform.runLater(() -> vet[finalMaiorF2].setLayoutY(vet[finalMaiorF2].getLayoutY() + 4.9));
                                 try {
-                                    Thread.sleep(10);
+                                    Thread.sleep(2);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
@@ -179,13 +260,18 @@ public class Aplicacao extends Application {
                     aux = vet[0];
                     vet[0] = vet[TL - 1];
                     vet[TL - 1] = aux;
+                    n++;
+                    int finalN1 = n;
+                    Platform.runLater(() -> {
+                        labelPermutacoes.setText("Permutações: " + finalN1);
+                    });
                     for (int i = 0; i < 10; i++) {
                         int finalPai = 0;
                         Platform.runLater(() -> vet[finalPai].setLayoutY(vet[finalPai].getLayoutY() + 4.9));
                         int finalMaiorF = TL - 1;
                         Platform.runLater(() -> vet[finalMaiorF].setLayoutY(vet[finalMaiorF].getLayoutY() - 4.9));
                         try {
-                            Thread.sleep(10);
+                            Thread.sleep(2);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -205,7 +291,7 @@ public class Aplicacao extends Application {
                                 Platform.runLater(() -> vet[finalPai1].setLayoutX(posPai + finalJ));
                                 Platform.runLater(() -> vet[finalMaiorF1].setLayoutX(posMaiorF - finalJ));
                                 try {
-                                    Thread.sleep(10);
+                                    Thread.sleep(2);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
@@ -216,7 +302,7 @@ public class Aplicacao extends Application {
                                 Platform.runLater(() -> vet[finalPai1].setLayoutX(posPai + finalJ));
                                 Platform.runLater(() -> vet[finalMaiorF1].setLayoutX(posMaiorF - finalJ));
                                 try {
-                                    Thread.sleep(10);
+                                    Thread.sleep(2);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
@@ -229,7 +315,7 @@ public class Aplicacao extends Application {
                         int finalMaiorF2 = TL - 1;
                         Platform.runLater(() -> vet[finalMaiorF2].setLayoutY(vet[finalMaiorF2].getLayoutY() + 4.9));
                         try {
-                            Thread.sleep(10);
+                            Thread.sleep(2);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -240,10 +326,11 @@ public class Aplicacao extends Application {
                         Platform.runLater(() -> vet[finalI].setLayoutY(200));
                     }
                 }
-                ordenando = false;
-                botao_gerar.setDisable(ordenando);
-                botao_inicio.setDisable(ordenando);
-                botao_cancelar.setVisible(ordenando);
+                botao_gerar.setDisable(false);
+                botao_inicio.setDisable(false);
+                for(int x = 0; x < vet.length; x++)
+                    if(isSort(x))
+                        vet[x].setStyle("-fx-background-color: lightgreen;");
                 return null;
             }
         };
@@ -286,12 +373,16 @@ public class Aplicacao extends Application {
         Stack<Integer> pilha = new Stack<>();
         pilha.push(fim);
         pilha.push(ini);
-
+        int n = 0;
+        botao_gerar.setDisable(true);
+        botao_inicio.setDisable(true);
         while (!pilha.isEmpty()) {
             ini = pilha.pop();
             fim = pilha.pop();
 
             int i = ini, j = fim;
+            labelI.setLayoutX(115 + i * 40);
+            labelJ.setLayoutX(125 + j * 40);
             Button aux;
             boolean flag = true;
 
@@ -306,13 +397,26 @@ public class Aplicacao extends Application {
                     if(isSort(x))
                         vet[x].setStyle("-fx-background-color: lightgreen;");
 
-                if (flag) {
-                    while (i < j && Integer.parseInt(vet[i].getText()) <= Integer.parseInt(vet[j].getText()))
+                if (flag)
+                    while (i < j && Integer.parseInt(vet[i].getText()) <= Integer.parseInt(vet[j].getText())) {
                         i++;
-                } else {
-                    while (i < j && Integer.parseInt(vet[j].getText()) >= Integer.parseInt(vet[i].getText()))
+                        labelI.setLayoutX(labelI.getLayoutX() + 40);
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                else
+                    while (i < j && Integer.parseInt(vet[j].getText()) >= Integer.parseInt(vet[i].getText())){
                         j--;
-                }
+                        labelJ.setLayoutX(labelJ.getLayoutX() - 40);
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                 for (int x = 0; x < 10; x++) {
                     final int finalI = i;
@@ -325,7 +429,7 @@ public class Aplicacao extends Application {
                     });
 
                     try {
-                        Thread.sleep(20);
+                        Thread.sleep(2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -346,7 +450,7 @@ public class Aplicacao extends Application {
                         finalButtonJ.setLayoutX(posMaiorF - posY);
                     });
                     try {
-                        Thread.sleep(20);
+                        Thread.sleep(2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -365,7 +469,7 @@ public class Aplicacao extends Application {
                         finalButtonJ1.setLayoutY(finalButtonJ1.getLayoutY() + 4.9);
                     });
                     try {
-                        Thread.sleep(20);
+                        Thread.sleep(2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -374,6 +478,12 @@ public class Aplicacao extends Application {
                 aux = vet[i];
                 vet[i] = vet[j];
                 vet[j] = aux;
+                n++; // qtde permutações
+                int finalN = n;
+                Platform.runLater(() -> {
+                    labelPermutacoes.setText("Permutações: " + finalN);
+                });
+
                 flag = !flag;
             }
             if (ini < i - 1) {
@@ -392,12 +502,41 @@ public class Aplicacao extends Application {
         }
         for(int x = 0; x < vet.length; x++)
                 vet[x].setVisible(true);
-        for(int x = 0; x < vet.length; x++) {
-            vet[x].setStyle("-fx-background-color: lightgreen;");
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        labelI.setVisible(false);
+        labelJ.setVisible(false);
+        botao_gerar.setDisable(false);
+        botao_inicio.setDisable(false);
+    }
+
+    public void quickPods(int ini, int fim) {
+        Stack<Integer> pilha = new Stack<>();
+        pilha.push(fim);
+        pilha.push(ini);
+        while (!pilha.isEmpty()) {
+            ini = pilha.pop();
+            fim = pilha.pop();
+            int i = ini, j = fim;
+            Button aux;
+            boolean flag = true;
+            while (i < j) {
+                if (flag)
+                    while (i < j && Integer.parseInt(vet[i].getText()) <= Integer.parseInt(vet[j].getText()))
+                        i++;
+                else
+                    while (i < j && Integer.parseInt(vet[j].getText()) >= Integer.parseInt(vet[i].getText()))
+                        j--;
+                aux = vet[i];
+                vet[i] = vet[j];
+                vet[j] = aux;
+                flag = !flag;
+            }
+            if (ini < i - 1) {
+                pilha.push(i - 1);
+                pilha.push(ini);
+            }
+            if (j + 1 < fim) {
+                pilha.push(fim);
+                pilha.push(j + 1);
             }
         }
     }
