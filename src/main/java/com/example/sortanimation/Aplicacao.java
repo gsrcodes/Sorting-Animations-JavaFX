@@ -43,7 +43,7 @@ public class Aplicacao extends Application {
         botao_inicio.setOnAction(e -> {
             if(comboBox.getValue().equals("HeapSort"))
                 heap_sort();
-            else
+            else if(comboBox.getValue().equals("QuickSort"))
                 quick_sort();
         });
         pane.getChildren().add(botao_inicio);
@@ -101,7 +101,6 @@ public class Aplicacao extends Application {
                 Button aux;
 
                 while (TL > 1 && ordenando) {
-                    System.out.println(TL);
                     pai = TL / 2 - 1;
                     while (pai >= 0) {
                         FE = 2 * pai + 1;
@@ -249,16 +248,142 @@ public class Aplicacao extends Application {
         thread.start();
     }
 
-    public void quick_sort()
+
+    public void quick_sort() {
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() {
+                quickS(0, vet.length - 1);
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            Platform.runLater(() -> {
+                System.out.println("acabou");
+            });
+        });
+
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
+    public void quickS(int ini, int fim)
     {
         Task<Void> task = new Task<Void>(){
             @Override
             protected Void call() {
-                System.out.println("Não implementado");
+                int i = ini, j = fim;
+                Button aux;
+                boolean flag = true;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                while(i < j) {
+                    if(flag)
+                        while((i < j && Integer.parseInt(vet[i].getText()) <= Integer.parseInt(vet[j].getText())))
+                            i++;
+                    else
+                        while(i < j && Integer.parseInt(vet[j].getText()) >= Integer.parseInt(vet[i].getText()))
+                            j--;
+                    for (int x = 0; x < 10; x++) {
+                        final int finalI = i;
+                        final int finalJ = j;
+                        final Button buttonI = vet[finalI];
+                        final Button buttonJ = vet[finalJ];
+                        Platform.runLater(() -> {
+                            buttonI.setLayoutY(buttonI.getLayoutY() + 4.9);
+                            buttonJ.setLayoutY(buttonJ.getLayoutY() - 4.9);
+                        });
+
+                        try {
+                            Thread.sleep(20);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    Button buttonI = vet[i];
+                    Button buttonJ = vet[j];
+                    final double posPai = buttonI.getLayoutX();
+                    final double posMaiorF = buttonJ.getLayoutX();
+                    final double diff = posMaiorF - posPai;
+
+                    for (double y = 0; Math.abs(y) <= Math.abs(diff); y += (diff > 0 ? 5 : -5)) {
+                        final double posY = y;
+                        Button finalButtonI = buttonI;
+                        Button finalButtonJ = buttonJ;
+                        Platform.runLater(() -> {
+                            finalButtonI.setLayoutX(posPai + posY);
+                            finalButtonJ.setLayoutX(posMaiorF - posY);
+                        });
+                        try {
+                            Thread.sleep(20);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    for (int x = 0; x < 10; x++) {
+                        final int finalI = i;
+                        final int finalJ = j;
+                        buttonI = vet[finalI];
+                        buttonJ = vet[finalJ];
+
+                        Button finalButtonI1 = buttonI;
+                        Button finalButtonJ1 = buttonJ;
+                        Platform.runLater(() -> {
+                            finalButtonI1.setLayoutY(finalButtonI1.getLayoutY() - 4.9);
+                            finalButtonJ1.setLayoutY(finalButtonJ1.getLayoutY() + 4.9);
+                        });
+
+                        try {
+                            Thread.sleep(20);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    aux = vet[i];
+                    vet[i] = vet[j];
+                    vet[j] = aux;
+                    flag = !flag;
+                }
+                if(ini < i - 1)
+                    quickS(ini, i - 1);
+                if(j + 1 < fim)
+                    quickS(j + 1, fim);
                 return null;
             }
         };
         Thread thread = new Thread(task);
         thread.start();
+    }
+
+    public void quick(int ini, int fim)
+    {
+        int i = ini, j = fim;
+        Button aux;
+        boolean flag = true;
+
+        while(i < j) {
+            if(flag)
+                while((i < j && Integer.parseInt(vet[i].getText()) <= Integer.parseInt(vet[j].getText())))
+                    i++;
+            else
+                while(i < j && Integer.parseInt(vet[j].getText()) >= Integer.parseInt(vet[i].getText()))
+                    j--;
+
+            aux = vet[i];
+            vet[i] = vet[j];
+            vet[j] = aux;
+            flag = !flag;
+        }
+
+        if(ini < i - 1)
+            quick(ini, i - 1);
+        if(j + 1 < fim)
+            quick(j + 1, fim);
     }
 }
