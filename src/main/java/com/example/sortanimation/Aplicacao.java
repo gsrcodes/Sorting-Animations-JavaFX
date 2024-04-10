@@ -9,12 +9,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.text.Font;
 
 import java.util.Random;
-import java.util.Stack;
 
 public class Aplicacao extends Application {
     AnchorPane pane;
@@ -24,24 +22,30 @@ public class Aplicacao extends Application {
     private Label[] labels;
     private Label labelI;
     private Label labelJ;
+    private Label labelFE;
+    private Label labelFD;
+    private Label labelPai;
     private Label labelPermutacoes;
 
-    private String code = "public void quickPods(int ini, int fim) {\n" +
-            "    Stack<Integer> pilha = new Stack<>();\n" +
+    private TextArea textArea;
+
+    private TextArea pilhaValores;
+
+    private String codigoQuick = "public void quickIterativo(int ini, int fim) {\n" +
+            "    Pilha pilha = new Pilha();\n" +
             "    pilha.push(fim);\n" +
             "    pilha.push(ini);\n" +
             "    while (!pilha.isEmpty()) {\n" +
             "        ini = pilha.pop();\n" +
             "        fim = pilha.pop();\n" +
             "        int i = ini, j = fim;\n" +
-            "        Button aux;\n" +
             "        boolean flag = true;\n" +
             "        while (i < j) {\n" +
             "            if (flag)\n" +
-            "                while (i < j && Integer.parseInt(vet[i].getText()) <= Integer.parseInt(vet[j].getText()))\n" +
+            "                while (i < j && vet[i] <= vet[j]\n" +
             "                    i++;\n" +
             "            else\n" +
-            "                while (i < j && Integer.parseInt(vet[j].getText()) >= Integer.parseInt(vet[i].getText()))\n" +
+            "                while (i < j && vet[j] >= vet[i])\n" +
             "                    j--;\n" +
             "            aux = vet[i];\n" +
             "            vet[i] = vet[j];\n" +
@@ -59,6 +63,30 @@ public class Aplicacao extends Application {
             "    }\n" +
             "}\n";
 
+    private String codigoHeap = "public void heapSort() {\n" +
+            "        int TL = vet.length, FE, FD, maiorF, pai, n = 0;\n" +
+            "        while (TL > 1) {\n" +
+            "            pai = TL / 2 - 1;\n" +
+            "            while (pai >= 0) {\n" +
+            "                FE = 2 * pai + 1;\n" +
+            "                FD = FE + 1;\n" +
+            "                maiorF = FE;\n" +
+            "                if (FD < TL && vet[FD] > vet[FE])\n" +
+            "                    maiorF = FD;\n" +
+            "                if (vet[maiorF] > vet[pai]) {\n" +
+            "                    aux = vet[pai];\n" +
+            "                    vet[pai] = vet[maiorF];\n" +
+            "                    vet[maiorF] = aux;\n" +
+            "                }\n" +
+            "                pai--;\n" +
+            "            }\n" +
+            "            aux = vet[0];\n" +
+            "            vet[0] = vet[TL - 1];\n" +
+            "            vet[TL - 1] = aux;\n" +
+            "            TL--;\n" +
+            "        }\n" +
+            "    }\n";
+
     public static void main(String[] args)
     {
         launch(args);
@@ -68,12 +96,24 @@ public class Aplicacao extends Application {
         stage.setTitle("Pesquisa e Ordenacao");
         pane = new AnchorPane();
 
-        TextArea textArea = new TextArea(code);
+        textArea = new TextArea();
         textArea.setEditable(false);
         textArea.setLayoutY(40);
-        textArea.setLayoutX(400);
+        textArea.setLayoutX(850);
+        textArea.setMinHeight(580);
+        textArea.setMaxWidth(300);
+        textArea.setVisible(false);
         pane.getChildren().add(textArea);
-        highlightLine(textArea, 4);
+
+        pilhaValores = new TextArea();
+        pilhaValores.setEditable(false);
+        pilhaValores.setLayoutY(40);
+        pilhaValores.setLayoutX(750);
+        pilhaValores.setMaxHeight(200);
+        pilhaValores.setMaxWidth(70);
+        pilhaValores.setVisible(false);
+        pane.getChildren().add(pilhaValores);
+
         labelI = new Label("i");
         labelI.setVisible(false);
         labelJ = new Label("j");
@@ -86,6 +126,16 @@ public class Aplicacao extends Application {
         pane.getChildren().add(labelI);
         pane.getChildren().add(labelJ);
 
+        labelPai = new Label("pai");
+        labelPai.setVisible(false);
+        labelFE = new Label("FE");
+        labelFE.setVisible(false);
+        labelFD = new Label("FD");
+        labelFD.setVisible(false);
+        pane.getChildren().add(labelPai);
+        pane.getChildren().add(labelFE);
+        pane.getChildren().add(labelFD);
+
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.getItems().addAll("HeapSort", "QuickSort");
         comboBox.setValue("HeapSort");
@@ -96,6 +146,7 @@ public class Aplicacao extends Application {
         botao_inicio = new Button("Iniciar ordenação");
         botao_inicio.setLayoutX(10);
         botao_inicio.setLayoutY(100);
+        botao_inicio.setDisable(true);
         botao_inicio.setOnAction(e -> {
             if(comboBox.getValue().equals("HeapSort"))
                 heap_sort();
@@ -133,19 +184,7 @@ public class Aplicacao extends Application {
         Scene scene = new Scene(pane, 800, 300);
         stage.setScene(scene);
         stage.show();
-    }
-
-    private void highlightLine(TextArea textArea, int lineNumber) {
-        String[] lines = textArea.getText().split("\n");
-        StringBuilder highlightedCode = new StringBuilder();
-        for (int i = 0; i < lines.length; i++) {
-            if (i == lineNumber - 1) {
-                highlightedCode.append(">> ").append(lines[i]).append("\n");
-            } else {
-                highlightedCode.append(lines[i]).append("\n");
-            }
-        }
-        textArea.setText(highlightedCode.toString());
+        stage.setFullScreen(true);
     }
 
     public void gerar_valores() {
@@ -155,12 +194,17 @@ public class Aplicacao extends Application {
             labels[i].setVisible(true);
             vet[i].setStyle("");
         }
+        botao_inicio.setDisable(false);
         labelJ.setLayoutY(280);
         labelJ.setLayoutX(120 + 14 * 40);
         labelI.setLayoutY(280);
-        labelI.setLayoutX(120 + 0 * 40);
-        labelJ.setVisible(true);
-        labelI.setVisible(true);
+        labelI.setLayoutX(120);
+        labelFE.setLayoutX(115);
+        labelFE.setLayoutY(300);
+        labelPai.setLayoutX(115);
+        labelPai.setLayoutY(280);
+        labelFD.setLayoutX(115);
+        labelFD.setLayoutY(320);
         labelPermutacoes.setVisible(true);
     }
 
@@ -169,30 +213,53 @@ public class Aplicacao extends Application {
         Task<Void> task = new Task<Void>(){
             @Override
             protected Void call() {
+                textArea.setText(codigoHeap);
+                textArea.setVisible(true);
                 botao_gerar.setDisable(true);
                 botao_inicio.setDisable(true);
-                labelI.setVisible(false);
-                labelJ.setVisible(false);
+                labelPai.setVisible(true);
+                labelFE.setVisible(true);
+                labelFD.setVisible(true);
+                indicaLinha(2, codigoHeap);
                 int TL = vet.length, FE, FD, maiorF, pai, n = 0;
                 Button aux;
+                indicaLinha(3, codigoHeap);
                 while (TL > 1) {
+                    indicaLinha(3, codigoHeap);
                     for(int x = 0; x < vet.length; x++)
                         if(isSort(x))
                             vet[x].setStyle("-fx-background-color: lightgreen;");
                         else
                             vet[x].setStyle("");
+                    indicaLinha(4, codigoHeap);
                     pai = TL / 2 - 1;
+                    labelPai.setLayoutX(115 + pai * 40);
+                    indicaLinha(5, codigoHeap);
                     while (pai >= 0) {
+                        indicaLinha(5, codigoHeap);
+
+                        indicaLinha(6, codigoHeap);
                         FE = 2 * pai + 1;
+                        labelFE.setLayoutX(115 + FE * 40);
+                        indicaLinha(7, codigoHeap);
                         FD = FE + 1;
+                        labelFD.setLayoutX(115 + FD * 40);
+                        indicaLinha(8, codigoHeap);
                         maiorF = FE;
 
-                        if (FD < TL && Integer.parseInt(vet[FD].getText()) > Integer.parseInt(vet[FE].getText()))
+                        indicaLinha(9, codigoHeap);
+                        if (FD < TL && Integer.parseInt(vet[FD].getText()) > Integer.parseInt(vet[FE].getText())){
                             maiorF = FD;
+                            indicaLinha(9, codigoHeap);
+                        }
 
+                        indicaLinha(10, codigoHeap);
                         if (Integer.parseInt(vet[maiorF].getText()) > Integer.parseInt(vet[pai].getText())) {
+                            indicaLinha(11, codigoHeap);
                             aux = vet[pai];
+                            indicaLinha(12, codigoHeap);
                             vet[pai] = vet[maiorF];
+                            indicaLinha(14, codigoHeap);
                             vet[maiorF] = aux;
                             n++; // qtde permutações
                             int finalN = n;
@@ -255,10 +322,15 @@ public class Aplicacao extends Application {
                                 }
                             }
                         }
+                        indicaLinha(16, codigoHeap);
                         pai--;
+                        labelPai.setLayoutX(115 + pai * 40);
                     }
+                    indicaLinha(17, codigoHeap);
                     aux = vet[0];
+                    indicaLinha(18, codigoHeap);
                     vet[0] = vet[TL - 1];
+                    indicaLinha(19, codigoHeap);
                     vet[TL - 1] = aux;
                     n++;
                     int finalN1 = n;
@@ -320,6 +392,7 @@ public class Aplicacao extends Application {
                             e.printStackTrace();
                         }
                     }
+                    indicaLinha(21, codigoHeap);
                     TL--;
                     for(int i = 0; i < vet.length; i++) {
                         int finalI = i;
@@ -328,6 +401,9 @@ public class Aplicacao extends Application {
                 }
                 botao_gerar.setDisable(false);
                 botao_inicio.setDisable(false);
+                labelPai.setVisible(false);
+                labelFE.setVisible(false);
+                labelFD.setVisible(false);
                 for(int x = 0; x < vet.length; x++)
                     if(isSort(x))
                         vet[x].setStyle("-fx-background-color: lightgreen;");
@@ -337,7 +413,6 @@ public class Aplicacao extends Application {
         Thread thread = new Thread(task);
         thread.start();
     }
-
 
     public void quick_sort() {
         Task<Void> task = new Task<Void>() {
@@ -369,21 +444,67 @@ public class Aplicacao extends Application {
         return true;
     }
 
+    private void indicaLinha(int nLinha, String texto) {
+        String[] linhas = textArea.getText().split("\n");
+        StringBuilder novoTexto = new StringBuilder();
+        for (int i = 0; i < linhas.length; i++) {
+            if (i == nLinha - 1) {
+                novoTexto.append(">>").append(linhas[i]).append("\n");
+            } else {
+                novoTexto.append(linhas[i]).append("\n");
+            }
+        }
+        textArea.setText(novoTexto.toString());
+
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        textArea.setText(texto);
+    }
+
+    public void mostraPilha(Pilha pilha) {
+        Pilha pilhaAux = new Pilha(pilha);
+        pilhaValores.setText("Pilha:\n");
+        while (!pilhaAux.isEmpty()) {
+            pilhaValores.setText(pilhaValores.getText() + pilhaAux.pop() + "\n");
+        }
+    }
+
     public void quickIterativo(int ini, int fim) {
-        Stack<Integer> pilha = new Stack<>();
+        labelJ.setVisible(true);
+        labelI.setVisible(true);
+        textArea.setText(codigoQuick);
+        textArea.setVisible(true);
+        pilhaValores.setVisible(true);
+        indicaLinha(2, codigoQuick);
+        Pilha pilha = new Pilha();
+        indicaLinha(3, codigoQuick);
         pilha.push(fim);
+        mostraPilha(pilha);
+        indicaLinha(4, codigoQuick);
         pilha.push(ini);
+        mostraPilha(pilha);
         int n = 0;
         botao_gerar.setDisable(true);
         botao_inicio.setDisable(true);
+        indicaLinha(5, codigoQuick);
         while (!pilha.isEmpty()) {
+            mostraPilha(pilha);
+            indicaLinha(5, codigoQuick);
+            indicaLinha(6, codigoQuick);
             ini = pilha.pop();
+            mostraPilha(pilha);
+            indicaLinha(7, codigoQuick);
             fim = pilha.pop();
-
+            mostraPilha(pilha);
+            indicaLinha(8, codigoQuick);
             int i = ini, j = fim;
             labelI.setLayoutX(115 + i * 40);
             labelJ.setLayoutX(125 + j * 40);
             Button aux;
+            indicaLinha(9, codigoQuick);
             boolean flag = true;
 
             for(int x = 0; x < vet.length; x++)
@@ -392,13 +513,19 @@ public class Aplicacao extends Application {
                 else
                     vet[x].setVisible(false);
 
+            indicaLinha(10, codigoQuick);
             while (i < j) {
+                indicaLinha(10, codigoQuick);
                 for(int x = 0; x < vet.length; x++)
                     if(isSort(x))
                         vet[x].setStyle("-fx-background-color: lightgreen;");
 
-                if (flag)
+                indicaLinha(11, codigoQuick);
+                if (flag) {
+                    indicaLinha(12, codigoQuick);
                     while (i < j && Integer.parseInt(vet[i].getText()) <= Integer.parseInt(vet[j].getText())) {
+                        indicaLinha(12, codigoQuick);
+                        indicaLinha(13, codigoQuick);
                         i++;
                         labelI.setLayoutX(labelI.getLayoutX() + 40);
                         try {
@@ -407,8 +534,14 @@ public class Aplicacao extends Application {
                             e.printStackTrace();
                         }
                     }
-                else
+                    indicaLinha(11, codigoQuick);
+                }
+                else {
+                    indicaLinha(14, codigoQuick);
+                    indicaLinha(15, codigoQuick);
                     while (i < j && Integer.parseInt(vet[j].getText()) >= Integer.parseInt(vet[i].getText())){
+                        indicaLinha(15, codigoQuick);
+                        indicaLinha(16, codigoQuick);
                         j--;
                         labelJ.setLayoutX(labelJ.getLayoutX() - 40);
                         try {
@@ -417,7 +550,13 @@ public class Aplicacao extends Application {
                             e.printStackTrace();
                         }
                     }
-
+                }
+                indicaLinha(17, codigoQuick);
+                aux = vet[i];
+                indicaLinha(18, codigoQuick);
+                vet[i] = vet[j];
+                indicaLinha(19, codigoQuick);
+                vet[j] = aux;
                 for (int x = 0; x < 10; x++) {
                     final int finalI = i;
                     final int finalJ = j;
@@ -474,25 +613,30 @@ public class Aplicacao extends Application {
                         e.printStackTrace();
                     }
                 }
-
-                aux = vet[i];
-                vet[i] = vet[j];
-                vet[j] = aux;
-                n++; // qtde permutações
+                n = n + 1; // qtde permutações
                 int finalN = n;
                 Platform.runLater(() -> {
                     labelPermutacoes.setText("Permutações: " + finalN);
                 });
-
+                indicaLinha(20, codigoQuick);
                 flag = !flag;
             }
+            indicaLinha(22, codigoQuick);
             if (ini < i - 1) {
+                indicaLinha(23, codigoQuick);
                 pilha.push(i - 1);
+                mostraPilha(pilha);
+                indicaLinha(24, codigoQuick);
                 pilha.push(ini);
+                mostraPilha(pilha);
             }
             if (j + 1 < fim) {
+                indicaLinha(27, codigoQuick);
                 pilha.push(fim);
+                mostraPilha(pilha);
+                indicaLinha(28, codigoQuick);
                 pilha.push(j + 1);
+                mostraPilha(pilha);
             }
             try {
                 Thread.sleep(2000);
@@ -500,44 +644,12 @@ public class Aplicacao extends Application {
                 e.printStackTrace();
             }
         }
+        mostraPilha(pilha);
         for(int x = 0; x < vet.length; x++)
                 vet[x].setVisible(true);
         labelI.setVisible(false);
         labelJ.setVisible(false);
         botao_gerar.setDisable(false);
         botao_inicio.setDisable(false);
-    }
-
-    public void quickPods(int ini, int fim) {
-        Stack<Integer> pilha = new Stack<>();
-        pilha.push(fim);
-        pilha.push(ini);
-        while (!pilha.isEmpty()) {
-            ini = pilha.pop();
-            fim = pilha.pop();
-            int i = ini, j = fim;
-            Button aux;
-            boolean flag = true;
-            while (i < j) {
-                if (flag)
-                    while (i < j && Integer.parseInt(vet[i].getText()) <= Integer.parseInt(vet[j].getText()))
-                        i++;
-                else
-                    while (i < j && Integer.parseInt(vet[j].getText()) >= Integer.parseInt(vet[i].getText()))
-                        j--;
-                aux = vet[i];
-                vet[i] = vet[j];
-                vet[j] = aux;
-                flag = !flag;
-            }
-            if (ini < i - 1) {
-                pilha.push(i - 1);
-                pilha.push(ini);
-            }
-            if (j + 1 < fim) {
-                pilha.push(fim);
-                pilha.push(j + 1);
-            }
-        }
     }
 }
