@@ -26,6 +26,7 @@ public class Aplicacao extends Application {
     private Label labelFD;
     private Label labelPai;
     private Label labelPermutacoes;
+    private Label labelComparacoes;
 
     private TextArea textArea;
 
@@ -122,6 +123,11 @@ public class Aplicacao extends Application {
         labelPermutacoes.setLayoutX(10);
         labelPermutacoes.setLayoutY(130);
         labelPermutacoes.setVisible(false);
+        labelComparacoes = new Label("Comparações: " + 0);
+        labelComparacoes.setLayoutX(10);
+        labelComparacoes.setLayoutY(150);
+        labelComparacoes.setVisible(false);
+        pane.getChildren().add(labelComparacoes);
         pane.getChildren().add(labelPermutacoes);
         pane.getChildren().add(labelI);
         pane.getChildren().add(labelJ);
@@ -206,6 +212,7 @@ public class Aplicacao extends Application {
         labelFD.setLayoutX(115);
         labelFD.setLayoutY(320);
         labelPermutacoes.setVisible(true);
+        labelComparacoes.setVisible(true);
     }
 
     public void heap_sort()
@@ -220,11 +227,19 @@ public class Aplicacao extends Application {
                 labelPai.setVisible(true);
                 labelFE.setVisible(true);
                 labelFD.setVisible(true);
+                labelPermutacoes.setVisible(true);
+                labelComparacoes.setVisible(true);
                 indicaLinha(2, codigoHeap);
-                int TL = vet.length, FE, FD, maiorF, pai, n = 0;
+                int TL = vet.length, FE, FD, maiorF, pai, nPermutacao = 0, nComparacao = 0;
                 Button aux;
                 indicaLinha(3, codigoHeap);
                 while (TL > 1) {
+                    nComparacao++;
+                    int finalNComparacao = nComparacao;
+                    Platform.runLater(() -> {
+                        labelComparacoes.setText("Comparações: " + finalNComparacao);
+                    });
+
                     indicaLinha(3, codigoHeap);
                     for(int x = 0; x < vet.length; x++)
                         if(isSort(x))
@@ -236,6 +251,11 @@ public class Aplicacao extends Application {
                     labelPai.setLayoutX(115 + pai * 40);
                     indicaLinha(5, codigoHeap);
                     while (pai >= 0) {
+                        nComparacao++;
+                        int finalNComparacao1 = nComparacao;
+                        Platform.runLater(() -> {
+                            labelComparacoes.setText("Comparações: " + finalNComparacao1);
+                        });
                         indicaLinha(5, codigoHeap);
 
                         indicaLinha(6, codigoHeap);
@@ -249,22 +269,37 @@ public class Aplicacao extends Application {
 
                         indicaLinha(9, codigoHeap);
                         if (FD < TL && Integer.parseInt(vet[FD].getText()) > Integer.parseInt(vet[FE].getText())){
+                            nComparacao++;
+                            int finalNComparacao2 = nComparacao;
+                            Platform.runLater(() -> {
+                                labelComparacoes.setText("Comparações: " + finalNComparacao2);
+                            });
                             maiorF = FD;
                             indicaLinha(9, codigoHeap);
                         }
+                        nComparacao++;
+                        int finalNComparacao3 = nComparacao;
+                        Platform.runLater(() -> {
+                            labelComparacoes.setText("Comparações: " + finalNComparacao3);
+                        });
 
                         indicaLinha(10, codigoHeap);
                         if (Integer.parseInt(vet[maiorF].getText()) > Integer.parseInt(vet[pai].getText())) {
+                            nComparacao++;
+                            int finalNComparacao4 = nComparacao;
+                            Platform.runLater(() -> {
+                                labelComparacoes.setText("Comparações: " + finalNComparacao4);
+                            });
                             indicaLinha(11, codigoHeap);
                             aux = vet[pai];
                             indicaLinha(12, codigoHeap);
                             vet[pai] = vet[maiorF];
                             indicaLinha(14, codigoHeap);
                             vet[maiorF] = aux;
-                            n++; // qtde permutações
-                            int finalN = n;
+                            nPermutacao++; // qtde permutações
+                            int finalN = nPermutacao;
                             Platform.runLater(() -> {
-                                labelPermutacoes.setText("Permutações: " + finalN);
+                                labelPermutacoes.setText("Comparações: " + finalN);
                             });
                             for (int i = 0; i < 10; i++) {
                                 int finalPai = pai;
@@ -322,18 +357,28 @@ public class Aplicacao extends Application {
                                 }
                             }
                         }
+                        nComparacao++;
+                        int finalNComparacao5 = nComparacao;
+                        Platform.runLater(() -> {
+                            labelComparacoes.setText("Comparações: " + finalNComparacao5);
+                        });
                         indicaLinha(16, codigoHeap);
                         pai--;
                         labelPai.setLayoutX(115 + pai * 40);
                     }
+                    nComparacao++;
+                    int finalNComparacao6 = nComparacao;
+                    Platform.runLater(() -> {
+                        labelComparacoes.setText("Comparações: " + finalNComparacao6);
+                    });
                     indicaLinha(17, codigoHeap);
                     aux = vet[0];
                     indicaLinha(18, codigoHeap);
                     vet[0] = vet[TL - 1];
                     indicaLinha(19, codigoHeap);
                     vet[TL - 1] = aux;
-                    n++;
-                    int finalN1 = n;
+                    nPermutacao++;
+                    int finalN1 = nPermutacao;
                     Platform.runLater(() -> {
                         labelPermutacoes.setText("Permutações: " + finalN1);
                     });
@@ -399,6 +444,11 @@ public class Aplicacao extends Application {
                         Platform.runLater(() -> vet[finalI].setLayoutY(200));
                     }
                 }
+                nComparacao++;
+                int finalNComparacao7 = nComparacao;
+                Platform.runLater(() -> {
+                    labelComparacoes.setText("Comparações: " + finalNComparacao7);
+                });
                 botao_gerar.setDisable(false);
                 botao_inicio.setDisable(false);
                 labelPai.setVisible(false);
@@ -457,7 +507,7 @@ public class Aplicacao extends Application {
         textArea.setText(novoTexto.toString());
 
         try {
-            Thread.sleep(100);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -486,11 +536,16 @@ public class Aplicacao extends Application {
         indicaLinha(4, codigoQuick);
         pilha.push(ini);
         mostraPilha(pilha);
-        int n = 0;
+        int nPermutacao = 0, nComparacao = 0;
         botao_gerar.setDisable(true);
         botao_inicio.setDisable(true);
         indicaLinha(5, codigoQuick);
         while (!pilha.isEmpty()) {
+            nComparacao++;
+            int finalNComparacao = nComparacao;
+            Platform.runLater(() -> {
+                labelComparacoes.setText("Comparações: " + finalNComparacao);
+            });
             mostraPilha(pilha);
             indicaLinha(5, codigoQuick);
             indicaLinha(6, codigoQuick);
@@ -515,6 +570,11 @@ public class Aplicacao extends Application {
 
             indicaLinha(10, codigoQuick);
             while (i < j) {
+                nComparacao++;
+                int finalNComparacao1 = nComparacao;
+                Platform.runLater(() -> {
+                    labelComparacoes.setText("Comparações: " + finalNComparacao1);
+                });
                 indicaLinha(10, codigoQuick);
                 for(int x = 0; x < vet.length; x++)
                     if(isSort(x))
@@ -524,6 +584,11 @@ public class Aplicacao extends Application {
                 if (flag) {
                     indicaLinha(12, codigoQuick);
                     while (i < j && Integer.parseInt(vet[i].getText()) <= Integer.parseInt(vet[j].getText())) {
+                        nComparacao++;
+                        int finalNComparacao3 = nComparacao;
+                        Platform.runLater(() -> {
+                            labelComparacoes.setText("Comparações: " + finalNComparacao3);
+                        });
                         indicaLinha(12, codigoQuick);
                         indicaLinha(13, codigoQuick);
                         i++;
@@ -534,12 +599,22 @@ public class Aplicacao extends Application {
                             e.printStackTrace();
                         }
                     }
+                    nComparacao++;
+                    int finalNComparacao4 = nComparacao;
+                    Platform.runLater(() -> {
+                        labelComparacoes.setText("Comparações: " + finalNComparacao4);
+                    });
                     indicaLinha(11, codigoQuick);
                 }
                 else {
                     indicaLinha(14, codigoQuick);
                     indicaLinha(15, codigoQuick);
                     while (i < j && Integer.parseInt(vet[j].getText()) >= Integer.parseInt(vet[i].getText())){
+                        nComparacao++;
+                        int finalNComparacao5 = nComparacao;
+                        Platform.runLater(() -> {
+                            labelComparacoes.setText("Comparações: " + finalNComparacao5);
+                        });
                         indicaLinha(15, codigoQuick);
                         indicaLinha(16, codigoQuick);
                         j--;
@@ -550,7 +625,17 @@ public class Aplicacao extends Application {
                             e.printStackTrace();
                         }
                     }
+                    nComparacao++;
+                    int finalNComparacao6 = nComparacao;
+                    Platform.runLater(() -> {
+                        labelComparacoes.setText("Comparações: " + finalNComparacao6);
+                    });
                 }
+                nComparacao++;
+                int finalNComparacao2 = nComparacao;
+                Platform.runLater(() -> {
+                    labelComparacoes.setText("Comparações: " + finalNComparacao2);
+                });
                 indicaLinha(17, codigoQuick);
                 aux = vet[i];
                 indicaLinha(18, codigoQuick);
@@ -576,17 +661,17 @@ public class Aplicacao extends Application {
 
                 Button buttonI = vet[i];
                 Button buttonJ = vet[j];
-                final double posPai = buttonI.getLayoutX();
-                final double posMaiorF = buttonJ.getLayoutX();
-                final double diff = posMaiorF - posPai;
+                final double posI = buttonI.getLayoutX();
+                final double posJ = buttonJ.getLayoutX();
+                final double diff = posJ - posI;
 
                 for (double y = 0; Math.abs(y) <= Math.abs(diff); y += (diff > 0 ? 5 : -5)) {
                     final double posY = y;
                     Button finalButtonI = buttonI;
                     Button finalButtonJ = buttonJ;
                     Platform.runLater(() -> {
-                        finalButtonI.setLayoutX(posPai + posY);
-                        finalButtonJ.setLayoutX(posMaiorF - posY);
+                        finalButtonI.setLayoutX(posI + posY);
+                        finalButtonJ.setLayoutX(posJ - posY);
                     });
                     try {
                         Thread.sleep(2);
@@ -594,7 +679,6 @@ public class Aplicacao extends Application {
                         e.printStackTrace();
                     }
                 }
-
                 for (int x = 0; x < 10; x++) {
                     final int finalI = i;
                     final int finalJ = j;
@@ -613,14 +697,19 @@ public class Aplicacao extends Application {
                         e.printStackTrace();
                     }
                 }
-                n = n + 1; // qtde permutações
-                int finalN = n;
+                nPermutacao = nPermutacao + 1; // qtde permutações
+                int finalN = nPermutacao;
                 Platform.runLater(() -> {
                     labelPermutacoes.setText("Permutações: " + finalN);
                 });
                 indicaLinha(20, codigoQuick);
                 flag = !flag;
             }
+            nComparacao++;
+            int finalNComparacao7 = nComparacao;
+            Platform.runLater(() -> {
+                labelComparacoes.setText("Comparações: " + finalNComparacao7);
+            });
             indicaLinha(22, codigoQuick);
             if (ini < i - 1) {
                 indicaLinha(23, codigoQuick);
@@ -630,6 +719,11 @@ public class Aplicacao extends Application {
                 pilha.push(ini);
                 mostraPilha(pilha);
             }
+            nComparacao++;
+            int finalNComparacao8 = nComparacao;
+            Platform.runLater(() -> {
+                labelComparacoes.setText("Comparações: " + finalNComparacao8);
+            });
             if (j + 1 < fim) {
                 indicaLinha(27, codigoQuick);
                 pilha.push(fim);
@@ -638,12 +732,22 @@ public class Aplicacao extends Application {
                 pilha.push(j + 1);
                 mostraPilha(pilha);
             }
+            nComparacao++;
+            int finalNComparacao9 = nComparacao;
+            Platform.runLater(() -> {
+                labelComparacoes.setText("Comparações: " + finalNComparacao9);
+            });
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+        nComparacao++;
+        int finalNComparacao10 = nComparacao;
+        Platform.runLater(() -> {
+            labelComparacoes.setText("Comparações: " + finalNComparacao10);
+        });
         mostraPilha(pilha);
         for(int x = 0; x < vet.length; x++)
                 vet[x].setVisible(true);
