@@ -224,9 +224,6 @@ public class Aplicacao extends Application {
                 textArea.setVisible(true);
                 botao_gerar.setDisable(true);
                 botao_inicio.setDisable(true);
-                labelPai.setVisible(true);
-                labelFE.setVisible(true);
-                labelFD.setVisible(true);
                 labelPermutacoes.setVisible(true);
                 labelComparacoes.setVisible(true);
                 indicaLinha(1, codigoHeap);
@@ -261,12 +258,17 @@ public class Aplicacao extends Application {
                         indicaLinha(5, codigoHeap);
                         FE = 2 * pai + 1;
                         labelFE.setLayoutX(115 + FE * 40);
+
                         indicaLinha(6, codigoHeap);
                         FD = FE + 1;
                         labelFD.setLayoutX(115 + FD * 40);
+
+                        labelPai.setVisible(true);
+                        labelFE.setVisible(true);
+                        labelFD.setVisible(true);
+
                         indicaLinha(7, codigoHeap);
                         maiorF = FE;
-
                         indicaLinha(8, codigoHeap);
                         if (FD < TL && Integer.parseInt(vet[FD].getText()) > Integer.parseInt(vet[FE].getText())){
                             nComparacao++;
@@ -301,61 +303,7 @@ public class Aplicacao extends Application {
                             Platform.runLater(() -> {
                                 labelPermutacoes.setText("Permutações: " + auxPR);
                             });
-                            for (int i = 0; i < 10; i++) {
-                                int finalPai = pai;
-                                Platform.runLater(() -> vet[finalPai].setLayoutY(vet[finalPai].getLayoutY() + 4.9));
-                                int finalMaiorF = maiorF;
-                                Platform.runLater(() -> vet[finalMaiorF].setLayoutY(vet[finalMaiorF].getLayoutY() - 4.9));
-                                try {
-                                    Thread.sleep(2);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            for (int i = 0; i < 1; i++) {
-                                final int finalPai1 = pai;
-                                final int finalMaiorF1 = maiorF;
-
-                                double posPai = vet[finalPai1].getLayoutX();
-                                double posMaiorF = vet[finalMaiorF1].getLayoutX();
-
-                                double diff = posMaiorF - posPai;
-
-                                if (diff > 0) {
-                                    for (double j = 0; j <= diff; j += 5) {
-                                        double finalJ = j;
-                                        Platform.runLater(() -> vet[finalPai1].setLayoutX(posPai + finalJ));
-                                        Platform.runLater(() -> vet[finalMaiorF1].setLayoutX(posMaiorF - finalJ));
-                                        try {
-                                            Thread.sleep(2);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                } else {
-                                    for (double j = 0; j >= diff; j -= 5) {
-                                        double finalJ = j;
-                                        Platform.runLater(() -> vet[finalPai1].setLayoutX(posPai + finalJ));
-                                        Platform.runLater(() -> vet[finalMaiorF1].setLayoutX(posMaiorF - finalJ));
-                                        try {
-                                            Thread.sleep(2);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-                            }
-                            for (int i = 0; i < 10; i++) {
-                                int finalPai2 = pai;
-                                Platform.runLater(() -> vet[finalPai2].setLayoutY(vet[finalPai2].getLayoutY() - 4.9));
-                                int finalMaiorF2 = maiorF;
-                                Platform.runLater(() -> vet[finalMaiorF2].setLayoutY(vet[finalMaiorF2].getLayoutY() + 4.9));
-                                try {
-                                    Thread.sleep(2);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
+                            animacaoTroca(pai, maiorF);
                         }
                         nComparacao++;
                         auxPR = nComparacao;
@@ -390,67 +338,16 @@ public class Aplicacao extends Application {
                     Platform.runLater(() -> {
                         labelPermutacoes.setText("Permutações: " + PR);
                     });
-                    for (int i = 0; i < 10; i++) {
-                        int finalPai = 0;
-                        Platform.runLater(() -> vet[finalPai].setLayoutY(vet[finalPai].getLayoutY() + 4.9));
-                        int finalMaiorF = TL - 1;
-                        Platform.runLater(() -> vet[finalMaiorF].setLayoutY(vet[finalMaiorF].getLayoutY() - 4.9));
-                        try {
-                            Thread.sleep(2);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    for (int i = 0; i < 1; i++) {
-                        final int finalPai1 = 0;
-                        final int finalMaiorF1 = TL - 1;
-
-                        double posPai = vet[finalPai1].getLayoutX();
-                        double posMaiorF = vet[finalMaiorF1].getLayoutX();
-
-                        double diff = posMaiorF - posPai;
-
-                        if (diff > 0) {
-                            for (double j = 0; j <= diff; j += 5) {
-                                double finalJ = j;
-                                Platform.runLater(() -> vet[finalPai1].setLayoutX(posPai + finalJ));
-                                Platform.runLater(() -> vet[finalMaiorF1].setLayoutX(posMaiorF - finalJ));
-                                try {
-                                    Thread.sleep(2);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        } else {
-                            for (double j = 0; j >= diff; j -= 5) {
-                                double finalJ = j;
-                                Platform.runLater(() -> vet[finalPai1].setLayoutX(posPai + finalJ));
-                                Platform.runLater(() -> vet[finalMaiorF1].setLayoutX(posMaiorF - finalJ));
-                                try {
-                                    Thread.sleep(2);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                    for (int i = 0; i < 10; i++) {
-                        int finalPai2 = 0;
-                        Platform.runLater(() -> vet[finalPai2].setLayoutY(vet[finalPai2].getLayoutY() - 4.9));
-                        int finalMaiorF2 = TL - 1;
-                        Platform.runLater(() -> vet[finalMaiorF2].setLayoutY(vet[finalMaiorF2].getLayoutY() + 4.9));
-                        try {
-                            Thread.sleep(2);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    animacaoTroca(0, TL - 1);
                     indicaLinha(20, codigoHeap);
                     TL--;
                     for(int i = 0; i < vet.length; i++) {
                         int finalI = i;
                         Platform.runLater(() -> vet[finalI].setLayoutY(200));
                     }
+                    labelFE.setVisible(false);
+                    labelPai.setVisible(false);
+                    labelFD.setVisible(false);
                 }
                 nComparacao++;
                 auxPR = nComparacao;
@@ -617,61 +514,7 @@ public class Aplicacao extends Application {
                         vet[i] = vet[j];
                         indicaLinha(18, codigoQuick);
                         vet[j] = aux;
-                        for (int x = 0; x < 10; x++) {
-                            final int finalI = i;
-                            final int finalJ = j;
-                            final Button buttonI = vet[finalI];
-                            final Button buttonJ = vet[finalJ];
-                            Platform.runLater(() -> {
-                                buttonI.setLayoutY(buttonI.getLayoutY() + 4.9);
-                                buttonJ.setLayoutY(buttonJ.getLayoutY() - 4.9);
-                            });
-
-                            try {
-                                Thread.sleep(2);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        Button buttonI = vet[i];
-                        Button buttonJ = vet[j];
-                        final double posI = buttonI.getLayoutX();
-                        final double posJ = buttonJ.getLayoutX();
-                        final double diff = posJ - posI;
-
-                        for (double y = 0; Math.abs(y) <= Math.abs(diff); y += (diff > 0 ? 5 : -5)) {
-                            final double posY = y;
-                            Button finalButtonI = buttonI;
-                            Button finalButtonJ = buttonJ;
-                            Platform.runLater(() -> {
-                                finalButtonI.setLayoutX(posI + posY);
-                                finalButtonJ.setLayoutX(posJ - posY);
-                            });
-                            try {
-                                Thread.sleep(2);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        for (int x = 0; x < 10; x++) {
-                            final int finalI = i;
-                            final int finalJ = j;
-                            buttonI = vet[finalI];
-                            buttonJ = vet[finalJ];
-
-                            Button finalButtonI1 = buttonI;
-                            Button finalButtonJ1 = buttonJ;
-                            Platform.runLater(() -> {
-                                finalButtonI1.setLayoutY(finalButtonI1.getLayoutY() - 4.9);
-                                finalButtonJ1.setLayoutY(finalButtonJ1.getLayoutY() + 4.9);
-                            });
-                            try {
-                                Thread.sleep(2);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        animacaoTroca(i, j);
                         nPermutacao = nPermutacao + 1; // qtde permutações
                         auxPR = nPermutacao;
                         Platform.runLater(() -> {
@@ -779,6 +622,57 @@ public class Aplicacao extends Application {
         pilhaValores.setText("Pilha:\n");
         while (!pilhaAux.isEmpty()) {
             pilhaValores.setText(pilhaValores.getText() + pilhaAux.pop() + "\n");
+        }
+    }
+
+    public void animacaoTroca(int botao1, int botao2) {
+        for (int i = 0; i < 10; i++) {
+            Platform.runLater(() -> vet[botao1].setLayoutY(vet[botao1].getLayoutY() + 4.9));
+            Platform.runLater(() -> vet[botao2].setLayoutY(vet[botao2].getLayoutY() - 4.9));
+            try {
+                Thread.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        for (int i = 0; i < 1; i++) {
+            double posBt1 = vet[botao1].getLayoutX();
+            double posBt2 = vet[botao2].getLayoutX();
+
+            double diff = posBt2 - posBt1;
+
+            if (diff > 0) {
+                for (double j = 0; j <= diff; j += 5) {
+                    double finalJ = j;
+                    Platform.runLater(() -> vet[botao1].setLayoutX(posBt1 + finalJ));
+                    Platform.runLater(() -> vet[botao2].setLayoutX(posBt2 - finalJ));
+                    try {
+                        Thread.sleep(2);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                for (double j = 0; j >= diff; j -= 5) {
+                    double finalJ = j;
+                    Platform.runLater(() -> vet[botao1].setLayoutX(posBt1 + finalJ));
+                    Platform.runLater(() -> vet[botao2].setLayoutX(posBt2 - finalJ));
+                    try {
+                        Thread.sleep(2);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < 10; i++) {
+            Platform.runLater(() -> vet[botao1].setLayoutY(vet[botao1].getLayoutY() - 4.9));
+            Platform.runLater(() -> vet[botao2].setLayoutY(vet[botao2].getLayoutY() + 4.9));
+            try {
+                Thread.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
